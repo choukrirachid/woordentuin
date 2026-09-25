@@ -36,8 +36,15 @@ Open vervolgens http://localhost:8000. Er zijn geen externe JavaScript-pakketten
 
 ## Huidige grenzen
 
-Oefenstatus blijft bewaard zolang de pagina openstaat. Er zijn geen accounts, tracking of API-sleutels nodig. PWA-installatie en een service worker zijn nog niet toegevoegd. Deze repository publiceert de app niet automatisch als website.
+Oefenstatus blijft bewaard zolang de pagina openstaat. Er zijn geen accounts, tracking of API-sleutels nodig. De app is installeerbaar via Chrome op Android en via Safari → Delen → Zet op beginscherm op iPad. De service worker slaat Boek 1 en alle oefenillustraties offline op. Officiële boekomslagen hebben internet nodig. GitHub Pages publiceert de app vanaf main.
 
 ## Controle
 
 Alle acht spelvormen zijn gecontroleerd op afronden en opnieuw starten. Ook de mobiele weergave, afbeeldingen, offlinewerking en exacte overeenkomst van de Arabische broninhoud zijn gecontroleerd.
+
+
+## Tablet-app
+
+Open https://choukrirachid.github.io/woordentuin/ en kies **Op je tablet**. Wacht op de melding dat oefeningen offline klaar zijn. Installatie moet op de tablet zelf worden bevestigd.
+
+De bestanden manifest.webmanifest, sw.js en icon-*.png horen naast de zelfstandige index.html. Verhoog bij elke nieuwe publicatie de CACHE-versie in sw.js zodat bestaande installaties een update ontvangen.
