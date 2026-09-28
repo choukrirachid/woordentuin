@@ -1,6 +1,6 @@
-const CACHE = 'woordentuin-tablet-v1';
+const CACHE = 'woordentuin-tablet-v3';
 const ROOT = new URL('./', self.location).href;
-const FILES = ['index.html', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
+const FILES = ["index.html", "app.js", "data.js", "bayna-images.js", "ahibb.js", "ahibb-images-01.js", "ahibb-images-02.js", "ahibb-images-03.js", "ahibb-images-04.js", "ahibb-images-05.js", "ahibb-images-06.js", "ahibb-images-07.js", "ahibb-images-08.js", "ahibb-images-09.js", "ahibb-images-10.js", "ahibb-images-11.js", "ahibb-images-12.js", "ahibb-images-13.js", "ahibb-images-14.js", "ahibb-images-15.js", "ahibb-images-16.js", "style.css", "manifest.webmanifest", "icon-180.png", "icon-192.png", "icon-512.png"];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES.map(path => new URL(path, ROOT).href))));
 });
