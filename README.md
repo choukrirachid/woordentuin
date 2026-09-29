@@ -40,7 +40,7 @@ Oefenstatus blijft bewaard zolang de pagina openstaat. Er zijn geen accounts, tr
 
 ## Controle
 
-Alle acht spelvormen zijn gecontroleerd op afronden en opnieuw starten. Ook de mobiele weergave, afbeeldingen, offlinewerking en exacte overeenkomst van de Arabische broninhoud zijn gecontroleerd.
+De elf oefenvormen zijn gecontroleerd op afronden en opnieuw starten. Ook de mobiele weergave, afbeeldingen, offlinewerking en exacte overeenkomst van de Arabische broninhoud zijn gecontroleerd.
 
 
 ## Tablet-app
