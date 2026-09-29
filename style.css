@@ -14,4 +14,19 @@ button,a{touch-action:manipulation}button{min-height:48px}button[hidden]{display
 @media(max-width:599px){header{padding:16px;gap:8px}.brand{font-size:21px}.brand small{display:none}.install-open{font-size:13px;padding:10px 13px;min-height:48px}.nav-link{font-size:13px}.hero h1{font-size:38px}.memory .tile{min-height:120px}.arabic{font-size:28px}.game .button{min-height:54px}.intro{flex-wrap:wrap}.intro .pill{white-space:normal}.game-top .back{max-width:58%}}
 @media(display-mode:standalone){body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}header{padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}}
 
+/* Voltooide maatjes blijven herkenbaar en krijgen per paar dezelfde kleur. */
+.memory .tile.matched,.memory .tile.matched:disabled{background:#d9f0de;border-color:#368052;color:#183f2c;opacity:1}
+.pairs .tile.matched{opacity:1;font-weight:650}
+.pairs .tile.matched.pair-0{background:#d9f0de;border-color:#38835b}
+.pairs .tile.matched.pair-1{background:#dceafa;border-color:#5683ad}
+.pairs .tile.matched.pair-2{background:#f9e5d3;border-color:#bf8552}
+.pairs .tile.matched.pair-3{background:#ece1f5;border-color:#9272ad}
+.reading-text{border:1px solid var(--line);border-radius:18px;background:#faf7ed;padding:18px 22px;margin:16px 0 22px;text-align:right}
+.reading-text p{margin:0 0 7px}.reading-text p:last-child{margin:0}.reading-stage>p{margin-top:20px}
+.translation-label{display:block;text-align:left;font-weight:650;margin:18px 0 8px}
+#translation{display:block;width:100%;font:inherit;color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:12px;resize:vertical}
+#translation:focus-visible{outline:3px solid #bf670c;outline-offset:2px}
+.translation-answer{margin-top:20px;text-align:left;background:#e4f1de;border:1px solid #43865c;border-radius:15px;padding:18px}
+.translation-answer[hidden]{display:none}.translation-answer p{margin:8px 0 0}
+
 .programs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.program{display:flex;flex-direction:column;align-items:flex-start;gap:13px;background:#fffdf7;border:1px solid var(--line);border-radius:22px;padding:30px;min-height:235px}.program:hover{border-color:var(--green);transform:translateY(-2px)}.program h3{font-size:25px;margin:0}.program .arabic{font-size:23px;color:var(--green)}.program .button{margin-top:auto}.stage>.listen-button{margin-bottom:16px}.flash+.listen-button{margin-top:16px}@media(max-width:760px){.programs{grid-template-columns:1fr}.program{min-height:190px}.program h3{font-size:22px}}

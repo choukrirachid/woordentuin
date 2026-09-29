@@ -28,7 +28,9 @@ const modes=[
  ['memory','▦','Memory','Onthoud waar de woordmaatjes liggen.'],
  ['build','✦','Woordbouwer','Zet de stukjes in de juiste volgorde.'],
  ['peek','◉','Raad het plaatje','Een wazig plaatje… wat zie jij?'],
- ['listen','♫','Luisteren','Luister en kies de Nederlandse betekenis.']
+ ['listen','♫','Luisteren','Luister en kies de Nederlandse betekenis.'],
+ ['read','☷','Lezen en begrijpen','Lees een kort tekstje en beantwoord vragen.'],
+ ['translate','✎','Lezen en vertalen','Schrijf je vertaling en vergelijk met een voorbeeld.']
 ];
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ar=text=>`<span class="arabic" lang="ar" dir="rtl">${esc(text)}</span>`;
@@ -70,7 +72,14 @@ function start(number, mode) {
   if(!l || !modes.some(m=>m[0]===mode)){location.hash='book';return;}
   game={lesson:l,mode,index:0,items:mode==='flash'?l.items:shuffle(l.items),flipped:false,answered:false,score:0,attempted:false};
   if(mode==='pairs'||mode==='memory') preparePairs();
+  if(mode==='read'||mode==='translate') game.items=readingItems(l);
   renderGame();
+}
+// De Arabische regels komen letterlijk uit de gecontroleerde leslijst.
+function readingItems(lesson){
+  const phrases=lesson.items.filter(item=>item[0].trim().includes(' ') && !item[0].includes(' ('));
+  const pool=phrases.length>=2?phrases:lesson.items.filter(item=>!item[0].includes(' ('));
+  return pool.length?pool:lesson.items;
 }
 function preparePairs(){
   game.batch=game.items.slice(game.index,game.index+4);game.matched=[];game.selected=[];game.locked=false;
@@ -97,18 +106,19 @@ function renderGame(){
   const g=game;if(g.index>=g.items.length){finish();return;}const item=g.items[g.index];
   if(g.mode==='flash'){
     shell(`<button class="flash" id="flip" aria-label="Draai het kaartje om">${visual(item)}${g.flipped?`<div class="translation">${nl(item)}</div>`:ar(item[0])}<span class="note">↔ Tik om ${g.flipped?'het Arabisch':'de betekenis'} te zien</span></button>`,'Kijk naar het woord. Weet jij wat het betekent?');
-    document.querySelector('#flip').insertAdjacentHTML('afterend',listenButton());document.querySelector('.listen-button').onclick=()=>speak(item);document.querySelector('.listen-button').onclick=()=>speak(item);document.querySelector('#flip').onclick=()=>{g.flipped=!g.flipped;renderGame();};
+    document.querySelector('#flip').insertAdjacentHTML('afterend',listenButton());document.querySelector('.listen-button').onclick=()=>speak(item);document.querySelector('#flip').onclick=()=>{g.flipped=!g.flipped;renderGame();};
     document.querySelector('#controls').innerHTML=`<button class="button secondary" id="prev" ${g.index===0?'disabled':''}>← Vorige</button><button class="button" id="next">${g.index===g.items.length-1?'Klaar ✓':'Volgend kaartje →'}</button>`;
     document.querySelector('#prev').onclick=()=>{g.index--;g.flipped=false;renderGame();};document.querySelector('#next').onclick=next;return;
   }
   if(g.mode==='pairs'||g.mode==='memory'){renderPairs();return;}
+  if(g.mode==='read'){renderReading();return;}
+  if(g.mode==='translate'){renderTranslation();return;}
   if(g.mode==='build'){renderBuild(item);return;}
   const opts=options(item);
   const needsCaption=game.lesson.items.filter(i=>i[3]===item[3]).length>1 || ['old1','old5','old2','old6','old3','old4','girl_you','girl_me','origin','from','call','here','this','questionCandy'].includes(item[3]);
   const prompt=g.mode==='listen'?listenButton():g.mode==='reverse'?`<h2>${nl(item)}</h2>`:g.mode==='quiz'?ar(item[0]):visual(item,g.mode==='peek'?'reveal':'')+(needsCaption?`<p>${nl(item)}</p>`:'');
   const instructions={listen:'Luister en kies de Nederlandse betekenis.',quiz:'Wat betekent dit Arabische woord?',reverse:'Hoe zeg je dit in het Arabisch?',drag:'Sleep het woord naar het plaatje. Je kunt ook op het woord tikken.',peek:'Herken jij het plaatje? Kies het passende Arabische woord.'};
   shell(`<div class="stage">${prompt}${g.mode==='drag'?'<div class="drop-zone" id="drop">Leg jouw woord hier neer ↓</div>':''}${g.mode==='peek'?'<button class="button secondary" id="hint">Maak het plaatje helder</button>':''}<div class="choices">${opts.map((o,i)=>`<button class="choice ${g.mode==='drag'?'drag-word':''}" data-option="${i}" ${g.mode==='drag'?'draggable="true"':''}>${(g.mode==='quiz'||g.mode==='listen')?nl(o):ar(o[0])}</button>`).join('')}</div></div>`,instructions[g.mode]);
-  if(g.mode!=='listen'){document.querySelector('.stage').insertAdjacentHTML('afterbegin',listenButton());document.querySelector('.listen-button').onclick=()=>speak(item)}
   if(g.mode!=='listen'){document.querySelector('.stage').insertAdjacentHTML('afterbegin',listenButton());document.querySelector('.listen-button').onclick=()=>speak(item)}
   document.querySelectorAll('[data-option]').forEach(b=>{
     b.onclick=()=>answer(opts[Number(b.dataset.option)],item,b);
@@ -119,13 +129,12 @@ function renderGame(){
     document.querySelectorAll('.drag-word').forEach(button => enableTouchDrag(button, drop, () => { answer(opts[Number(button.dataset.option)], item, button); if(g.answered) drop.innerHTML=ar(item[0]); }));
   }
   if(g.mode==='listen'){document.querySelector('.listen-button').onclick=()=>speak(item);setTimeout(()=>{if(game===g)speak(item)},120)}
-  if(g.mode==='listen'){document.querySelector('.listen-button').onclick=()=>speak(item);setTimeout(()=>{if(game===g)speak(item)},120)}
   if(g.mode==='peek')document.querySelector('#hint').onclick=()=>{document.querySelector('.visual').classList.remove('reveal');document.querySelector('#hint').disabled=true;};
 }
 function renderPairs(){
  const g=game;
  if(g.mode==='pairs'){
-  shell(`<div class="stage"><div class="pairs"><div class="pair-col">${g.left.map(id=>`<button class="tile ${g.matched.includes(id)?'matched':''}" data-id="${id}" data-side="0" ${g.matched.includes(id)?'disabled':''}>${ar(g.batch[id][0])}</button>`).join('')}</div><div class="pair-col">${g.right.map(id=>`<button class="tile ${g.matched.includes(id)?'matched':''}" data-id="${id}" data-side="1" ${g.matched.includes(id)?'disabled':''}>${nl(g.batch[id])}</button>`).join('')}</div></div></div>`,'Tik op een Arabisch woord en daarna op zijn Nederlandse maatje.');
+  shell(`<div class="stage"><div class="pairs"><div class="pair-col">${g.left.map(id=>`<button class="tile ${g.matched.includes(id)?`matched pair-${id}`:''}" data-id="${id}" data-side="0" ${g.matched.includes(id)?'disabled':''}>${ar(g.batch[id][0])}</button>`).join('')}</div><div class="pair-col">${g.right.map(id=>`<button class="tile ${g.matched.includes(id)?`matched pair-${id}`:''}" data-id="${id}" data-side="1" ${g.matched.includes(id)?'disabled':''}>${nl(g.batch[id])}</button>`).join('')}</div></div></div>`,'Tik op een Arabisch woord en daarna op zijn Nederlandse maatje.');
  }else{
   shell(`<div class="stage"><div class="memory">${g.cards.map((c,i)=>`<button class="tile ${g.matched.includes(c.id)?'matched':''}" data-id="${c.id}" data-side="${c.side}" data-card="${i}" aria-label="Kaart ${i+1} omdraaien" ${g.matched.includes(c.id)?'disabled':''}>${g.matched.includes(c.id)?(c.side?nl(g.batch[c.id]):ar(g.batch[c.id][0])):'✦'}</button>`).join('')}</div></div>`,'Zoek twee kaartjes met dezelfde betekenis: Arabisch en Nederlands.');
  }
@@ -136,10 +145,23 @@ function renderPairs(){
   b.classList.add('selected');if(g.mode==='memory')b.innerHTML=side?nl(g.batch[id]):ar(g.batch[id][0]);
   g.selected.push({id,side,button:b});if(g.selected.length<2)return;
   const [a,c]=g.selected;
-  if(a.id===c.id&&a.side!==c.side){g.matched.push(id);a.button.classList.add('matched');b.classList.add('matched');a.button.disabled=true;b.disabled=true;g.selected=[];feedback('Twee maatjes gevonden!',true);
+  if(a.id===c.id&&a.side!==c.side){g.matched.push(id);for(const card of [a.button,b]){card.classList.remove('selected');card.classList.add('matched');if(g.mode==='pairs')card.classList.add(`pair-${id}`);card.disabled=true;}g.selected=[];feedback('Twee maatjes gevonden!',true);
     if(g.matched.length===g.batch.length){document.querySelector('#controls').innerHTML='<button class="button" id="batch-next">Verder →</button>';document.querySelector('#batch-next').onclick=()=>{g.index+=g.batch.length;preparePairs();renderGame();};}
   }else{g.locked=true;feedback('Die horen nog niet bij elkaar. Probeer nog eens.');delayed=setTimeout(()=>{if(game!==g)return;g.selected.forEach(s=>{s.button.classList.remove('selected');if(g.mode==='memory')s.button.textContent='✦';});g.selected=[];g.locked=false;},1100);}
  });
+}
+function renderReading(){
+ const g=game,group=Math.floor(g.index/3)*3,lines=g.items.slice(group,group+3),item=g.items[g.index];
+ const choices=shuffle([item,...lines.filter(other=>other!==item&&other[0]!==item[0]),...g.lesson.items.filter(other=>other!==item&&!lines.includes(other)&&other[0]!==item[0])].slice(0,4));
+ shell(`<div class="stage reading-stage"><span class="eyebrow">Leeskaart ${Math.floor(group/3)+1}</span><div class="reading-text" lang="ar" dir="rtl">${lines.map(line=>`<p>${ar(line[0])}</p>`).join('')}</div><div class="controls"><button class="button secondary listen-button" type="button">♫ Luister naar de gezochte regel</button></div><p>Welke regel zegt: <strong>${nl(item)}</strong>?</p><div class="choices">${choices.map((choice,i)=>`<button class="choice" data-option="${i}">${ar(choice[0])}</button>`).join('')}</div></div>`,'Lees de Arabische regels en beantwoord de vraag.');
+ document.querySelector('.listen-button').onclick=()=>speak(item);
+ document.querySelectorAll('[data-option]').forEach(button=>button.onclick=()=>answer(choices[Number(button.dataset.option)],item,button));
+}
+function renderTranslation(){
+ const item=game.items[game.index];
+ shell(`<div class="stage reading-stage"><span class="eyebrow">Vertaal zelf</span><div class="reading-text">${ar(item[0])}</div><div class="controls"><button class="button secondary listen-button" type="button">♫ Luister</button></div><label class="translation-label" for="translation">Jouw Nederlandse vertaling</label><textarea id="translation" rows="3" placeholder="Schrijf hier wat je leest…"></textarea><div class="controls"><button class="button" id="compare" type="button">Vergelijk mijn vertaling</button></div><div class="translation-answer" id="translation-answer" hidden><strong>Voorbeeldvertaling</strong><p>${nl(item)}</p><p class="note">Vergelijk de betekenis met jouw antwoord. Andere goede formuleringen mogen ook.</p></div></div>`,'Lees het Arabisch, schrijf de betekenis en vergelijk je antwoord.');
+ document.querySelector('.listen-button').onclick=()=>speak(item);
+ document.querySelector('#compare').onclick=()=>{if(!document.querySelector('#translation').value.trim()){feedback('Schrijf eerst je eigen vertaling op.');document.querySelector('#translation').focus();return;}document.querySelector('#translation-answer').hidden=false;document.querySelector('#compare').disabled=true;feedback('Goed dat je zelf hebt vertaald. Vergelijk nu je antwoord.',true);nextButton();};
 }
 function renderBuild(item){
  const plain=item[0].split(' (')[0];

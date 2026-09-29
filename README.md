@@ -10,7 +10,7 @@ Open de GitHub Pages app via https://choukrirachid.github.io/woordentuin/. Na de
 
 - Programmakeuze: Al-Arabiyyah Bayna Yaday Awladina en Ik hou van Arabisch, elk met een eigen boekenoverzicht. Bij de eerste reeks is Boek 1 beschikbaar en komen Boeken 2–12 later.
 - Al-Arabiyyah Bayna Yaday Awladina: 8 lessen met 63 items. Ik hou van Arabisch, boek 1: 16 lessen met 604 kaarten.
-- Flitskaartjes, slepen, woordquiz, Nederlands naar Arabisch, koppelen, memory, woordbouwer, plaatjes raden en luisteren. De kaarten en quizvragen hebben een Arabische luisterknop.
+- Flitskaartjes, slepen, woordquiz, Nederlands naar Arabisch, koppelen, memory, woordbouwer, plaatjes raden, luisteren, lezen en begrijpen, en lezen en vertalen. De kaarten en quizvragen hebben een Arabische luisterknop. De leesoefeningen gebruiken uitsluitend regels uit de bestaande leswoordenschat; bij lessen met losse woorden zijn dit korte leeskaartjes in plaats van doorlopende verhalen.
 - Arabische tekst met klinkertekens, Nederlandse uitleg en illustraties zonder ogen.
 - Geschikt voor desktop en mobiel.
 
