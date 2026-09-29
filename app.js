@@ -18,6 +18,8 @@ import images14 from './ahibb-images-14.js';
 import images15 from './ahibb-images-15.js';
 import images16 from './ahibb-images-16.js';
 const ahibbImages=Object.assign({},images01,images02,images03,images04,images05,images06,images07,images08,images09,images10,images11,images12,images13,images14,images15,images16);
+// Drie oude afbeeldingscodes bevatten een lege data-URL. Hergebruik de bestaande illustraties.
+const imageFallbacks={'ahibb:06_jacket':'ahibb:05_jacket','ahibb:09_shirt':'ahibb:05_shirt','ahibb:15_song':'ahibb:07_song'};
 const app=document.querySelector('#app');
 const modes=[
  ['flash','↔','Flitskaartjes','Kijk, denk en draai je kaartje om.'],
@@ -47,7 +49,7 @@ function speak(item){if(!('speechSynthesis' in window))return;window.speechSynth
 function listenButton(){return '<button class="button secondary listen-button" type="button">♫ Luister</button>'}
 function visual(item,extra=''){
  const key=item[3];
- if(key.startsWith('ahibb:'))return `<div class="visual ${extra}"><img src="${ahibbImages[key]}" alt="Woordillustratie"></div>`;
+ if(key.startsWith('ahibb:')){const source=ahibbImages[key]?.length>100?ahibbImages[key]:ahibbImages[imageFallbacks[key]];return `<div class="visual ${extra}">${source?`<img src="${source}" alt="Woordillustratie">`:''}</div>`;}
  if(key.startsWith('digit:'))return `<div class="visual ${extra}"><span class="numeral">${key.split(':')[1]}</span></div>`;
  if(key==='and')return `<div class="visual multi ${extra}"><img src="${baynaImages.pen}" alt="Een pen"><span>+</span><img src="${baynaImages.paper}" alt="Papier"></div>`;
  if(key.startsWith('count:'))return `<div class="visual multi ${extra}">${Array.from({length:Number(key.split(':')[2])},()=>'<img src="${baynaImages.bag}" alt="Een tas">').join('')}</div>`;
